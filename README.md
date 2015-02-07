@@ -29,10 +29,18 @@ Troubleshoooting. If that fails, you can
 
 ##### E-mail mac389@gmail.com
 
+
+Repository Organization 
+=====
+
+ XLS->
+
+
 Dependencies
 =====
 
 - Python (built on 2.7)
 - NumPy
 - Matplotlib
+- Awesome_print
 - LaTeX 
