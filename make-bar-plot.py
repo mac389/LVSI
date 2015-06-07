@@ -10,16 +10,17 @@ rcParams['text.usetex'] = True
 fetch = lambda filename: json.load(open(filename,'rb')).values()
 format = lambda text: r'\Large \textbf{\textsc{%s}}'%text
 
-data = ['kappa-grades.json','lvsi-grades.json','lvsi-stains-grades.json','intra-rater-reliability.json']
+#data = ['kappa-grades.json','lvsi-grades.json','lvsi-stains-grades.json','intra-rater-reliability.json']
+data = ['lvsi-grades.json','lvsi-stains-grades.json','intra-rater-reliability.json']
 data = map(fetch,data)
 
-xlabels = ['Grading', '-IHC','+IHC','Intra-rater']
-
+#xlabels = ['Grading','-IHC','+IHC','Intra-rater']
+xlabels = ['-IHC','+IHC','Intra-rater']
 for i,datum in enumerate(data):
 	for j,datum2 in enumerate(data):
 		print '---------'
 		print ranksums(datum,datum2)
-		print i,j
+		print xlabels[i],xlabels[j]
 		print '--****-------'
 
 fig = plt.figure()
@@ -58,4 +59,4 @@ ax.set_xticks(range(1,len(xlabels)+1))
 ax.set_xticklabels(map(format,xlabels),rotation=60)
 ax.set_ylabel(r'\Large $\mathbf{\kappa}$',rotation='horizontal',labelpad=20)
 plt.tight_layout()
-plt.savefig('boxplot-notched.tiff')
+plt.savefig('boxplot-notched-no-grading.tiff')
