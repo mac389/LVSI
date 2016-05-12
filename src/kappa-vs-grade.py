@@ -30,7 +30,7 @@ for j,(pathologist_one,pathologist_two) in enumerate(list(itertools.combinations
 		contingency_table[j,rating_one,rating_two] += 1
 
 	
-   	kappas['%s-%s'%(pathologist_one,pathologist_two)] = cohens_kappa(contingency_table[j,:,:].squeeze()).kappa_max
+   	kappas['%s-%s'%(pathologist_one,pathologist_two)] = cohens_kappa(contingency_table[j,:,:].squeeze()).kappa
 
 print np.median(contingency_table,axis=0)
 print 0.5*(np.percentile(contingency_table,75,axis=0) - np.percentile(contingency_table,25,axis=0))

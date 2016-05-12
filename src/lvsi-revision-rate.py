@@ -25,7 +25,8 @@ for j,pathologist in enumerate(pathologists):
 			print '\t %d'%rating_two
 		contingency_table[j,rating_one,rating_two] += 1
 
-	#print contingency_table[j,:,:]
+	print contingency_table[j,:,:]
+	print pathologist
 	#json.dump(kappas,open('kappa-grades.json','wb'))
 
 print np.median(contingency_table,axis=0)

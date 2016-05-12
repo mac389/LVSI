@@ -7,13 +7,13 @@ from statsmodels.stats.inter_rater import cohens_kappa, to_table
 
 possible_grades = ['1','2','3']
 cols_with_grades = [1,2,3]
-pathologists = open('rater-names','rb').read().splitlines()
+pathologists = open('../data/rater-names','rb').read().splitlines()
 
 lvsi = {}
 for pathologist in pathologists:
 
-	df_one = pd.read_excel('stains.xls',pathologist,parse_cols=cols_with_grades, convert_float=False)
-	df_two = pd.read_excel('no-stain.xls',pathologist,parse_cols=cols_with_grades, convert_float=False)
+	df_one = pd.read_excel('../data/stains.xls',pathologist,parse_cols=cols_with_grades, convert_float=False)
+	df_two = pd.read_excel('../data/no-stain.xls',pathologist,parse_cols=cols_with_grades, convert_float=False)
 
 	patho_one_ratings = np.array([i[0][0] if len(i[0]) > 0 else -1 for i in df_one.apply(np.nonzero,axis=1).values]).astype(int)
 	patho_two_ratings = np.array([i[0][0] if len(i[0]) > 0 else -1 for i in df_two.apply(np.nonzero,axis=1).values]).astype(int)
@@ -32,9 +32,9 @@ for pathologist in pathologists:
 			contingency_table[rating_one,rating_two] += 1
 
 
-	lvsi[pathologist] = cohens_kappa(contingency_table).kappa_max
+	lvsi[pathologist] = cohens_kappa(contingency_table).kappa
 
-json.dump(lvsi,open('intra-rater-reliability.json','wb'))
+json.dump(lvsi,open('../data/intra-rater-reliability.json','wb'))
 
 ap(np.median(lvsi.values()))
 print 0.5*(np.percentile(lvsi.values(),75)-np.percentile(lvsi.values(),25))

@@ -1,31 +1,51 @@
-import json
+import json, itertools
 
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
-from scipy.stats import mannwhitneyu, ranksums
+from scipy.stats import mannwhitneyu, ranksums, ttest_rel
+from terminaltables import AsciiTable
+
 rcParams['text.usetex'] = True
 
-
+#Better to do a paired t-test
 
 fetch = lambda filename: json.load(open(filename,'rb')).values()
 format = lambda text: r'\Large \textbf{\textsc{%s}}'%text
 
+def ordered_fetch(filename,order):
+    db = json.load(open(filename,'rb'))
+    return [db[o] for o in order]
+
+order_of_names = ['%s-%s'%(rater_one,rater_two) for rater_one,rater_two 
+        in itertools.combinations(open('../data/rater-names','rb').read().splitlines(),2)]
+print order_of_names
 #data = ['kappa-grades.json','lvsi-grades.json','lvsi-stains-grades.json','intra-rater-reliability.json']
-data = ['lvsi-grades.json','lvsi-stains-grades.json','intra-rater-reliability.json']
+data = ['../data/lvsi-grades-s-stains.json','../data/lvsi-grades-c-stains.json','../data/intra-rater-reliability.json']
+ordered_data = [ordered_fetch(filename,order_of_names) for filename in data]
 data = map(fetch,data)
 
 #xlabels = ['Grading','-IHC','+IHC','Intra-rater']
 xlabels = ['-IHC','+IHC','Intra-rater']
-for i,datum in enumerate(data):
-	for j,datum2 in enumerate(data):
-		print '---------'
-		print ranksums(datum,datum2)
-		print xlabels[i],xlabels[j]
-		print '--****-------'
+
+tbl = [[str(ranksums(datum,datum2).pvalue)
+            for datum in data]
+            for datum2 in data]
+
+print AsciiTable([xlabels] + tbl).table
+
+print data[0]
+print ordered_data[0]
+
+tbl = [[str(ttest_rel(datum,datum2).pvalue)
+            for datum in ordered_data]
+            for datum2 in ordered_data]
+
+print AsciiTable([xlabels] + tbl).table
+
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-bp = ax.boxplot(data, patch_artist=True,notch=True,widths=0.5)
+bp = ax.boxplot(data, patch_artist=True,widths=0.5, notch=True)
 
 for box in bp['boxes']:
     # change outline color
@@ -59,4 +79,4 @@ ax.set_xticks(range(1,len(xlabels)+1))
 ax.set_xticklabels(map(format,xlabels),rotation=60)
 ax.set_ylabel(r'\Large $\mathbf{\kappa}$',rotation='horizontal',labelpad=20)
 plt.tight_layout()
-plt.savefig('boxplot-notched-no-grading.tiff')
+plt.savefig('../imgs/boxplot-notched-no-grading-notch.png')
